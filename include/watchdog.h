@@ -20,7 +20,7 @@
 int init_func_watchdog_reset(void);
 #endif
 
-#if defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)
+#if (defined(CONFIG_WATCHDOG) || defined(CONFIG_HW_WATCHDOG)) && !defined(CONFIG_SPL_BUILD)
 #define INIT_FUNC_WATCHDOG_INIT	init_func_watchdog_init,
 #define INIT_FUNC_WATCHDOG_RESET	init_func_watchdog_reset,
 #else
@@ -35,7 +35,7 @@ int init_func_watchdog_reset(void);
 /*
  * Hardware watchdog
  */
-#ifdef CONFIG_HW_WATCHDOG
+#if defined(CONFIG_HW_WATCHDOG) && !defined(CONFIG_SPL_BUILD)
 	#if defined(__ASSEMBLY__)
 		#define WATCHDOG_RESET bl hw_watchdog_reset
 	#else
@@ -47,7 +47,7 @@ int init_func_watchdog_reset(void);
 	/*
 	 * Maybe a software watchdog?
 	 */
-	#if defined(CONFIG_WATCHDOG)
+	#if defined(CONFIG_WATCHDOG) && !defined(CONFIG_SPL_BUILD)
 		#if defined(__ASSEMBLY__)
 			#define WATCHDOG_RESET bl watchdog_reset
 		#else

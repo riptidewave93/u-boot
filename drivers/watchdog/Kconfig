@@ -40,6 +40,24 @@ config OMAP_WATCHDOG
 	help
 	  Say Y here to enable the OMAP3+ watchdog driver.
 
+config SUNXI_WDT
+	bool "SUNXI watchdog timer support"
+	select HW_WATCHDOG
+	help
+	   Select this to enable the SUNXI watchdog timer.
+
+if SUNXI_WDT
+
+config SUNXI_WDT_TIMEOUT
+	int "SUNXI watchdog timeout setting"
+	default 10
+	range 1 16
+	depends on SUNXI_WDT
+	help
+	  Adjust the timeout window for the SUNXI watchdog timer.
+
+endif
+
 config ULP_WATCHDOG
 	bool "i.MX7ULP watchdog"
 	help

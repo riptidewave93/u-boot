@@ -101,7 +101,8 @@ static int init_func_watchdog_init(void)
 	(defined(CONFIG_M68K) || defined(CONFIG_MICROBLAZE) || \
 	defined(CONFIG_SH) || \
 	defined(CONFIG_DESIGNWARE_WATCHDOG) || \
-	defined(CONFIG_IMX_WATCHDOG))
+	defined(CONFIG_IMX_WATCHDOG) || \
+	defined(CONFIG_SUNXI_WDT))
 	hw_watchdog_init();
 	puts("       Watchdog enabled\n");
 # endif

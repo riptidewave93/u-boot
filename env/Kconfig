@@ -429,6 +429,17 @@ config ENV_FAT_DEVICE_AND_PART
 	                   If none, first valid partition in device D. If no
 	                   partition table then means device D.
 
+config ENV_FAT_DEVICE_AUTO_PROBE_SUNXI
+	bool "Enable auto detection of Device on SUNXI"
+	depends on ENV_IS_IN_FAT && ARCH_SUNXI
+	default n
+	help
+	  For SUNXI boards, which normally allow for multiple MMC devices, allow
+	  for automatic detection of which device to use for the u-boot env. This
+	  setting will ensure that your u-boot env will be saved to the same mmc
+	  device your system is booting from, instead of what is set to default
+	  by ENV_FAT_DEVICE_AND_PART.
+
 config ENV_FAT_FILE
 	string "Name of the FAT file to use for the environment"
 	depends on ENV_IS_IN_FAT

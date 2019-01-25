@@ -19,6 +19,11 @@
 #include <fat.h>
 #include <mmc.h>
 
+#if defined(CONFIG_ENV_FAT_DEVICE_AUTO_PROBE_SUNXI)
+#include <asm/io.h>
+#include <asm/arch/spl.h>
+#endif
+
 #ifdef CONFIG_SPL_BUILD
 /* TODO(sjg@chromium.org): Figure out why this is needed */
 # if !defined(CONFIG_TARGET_AM335X_EVM) || defined(CONFIG_SPL_OS_BOOT)
@@ -45,9 +50,28 @@ static int env_fat_save(void)
 	if (err)
 		return err;
 
+#if defined(CONFIG_ENV_FAT_DEVICE_AUTO_PROBE_SUNXI)
+	int bootdev = readb(SPL_ADDR + 0x28);
+	char *dev_and_part;
+
+ 	/* Figure out which MMC we are on */
+	if (bootdev == 0) {
+		dev_and_part = "0:auto";
+	} else if (bootdev == 2) {
+		dev_and_part = "1:auto";
+	} else {
+		/* Just go default */
+		dev_and_part = CONFIG_ENV_FAT_DEVICE_AND_PART;
+	}
+	part = blk_get_device_part_str(CONFIG_ENV_FAT_INTERFACE,
+					dev_and_part,
+					&dev_desc, &info, 1);
+#else
 	part = blk_get_device_part_str(CONFIG_ENV_FAT_INTERFACE,
 					CONFIG_ENV_FAT_DEVICE_AND_PART,
 					&dev_desc, &info, 1);
+#endif
+
 	if (part < 0)
 		return 1;
 
@@ -92,9 +116,28 @@ static int env_fat_load(void)
 		mmc_initialize(NULL);
 #endif
 
+#if defined(CONFIG_ENV_FAT_DEVICE_AUTO_PROBE_SUNXI)
+	int bootdev = readb(SPL_ADDR + 0x28);
+	char *dev_and_part;
+
+ 	/* Figure out which MMC we are on */
+	if (bootdev == 0) {
+		dev_and_part = "0:auto";
+	} else if (bootdev == 2) {
+		dev_and_part = "1:auto";
+	} else {
+		/* Just go default */
+		dev_and_part = CONFIG_ENV_FAT_DEVICE_AND_PART;
+	}
+	part = blk_get_device_part_str(CONFIG_ENV_FAT_INTERFACE,
+					dev_and_part,
+					&dev_desc, &info, 1);
+#else
 	part = blk_get_device_part_str(CONFIG_ENV_FAT_INTERFACE,
 					CONFIG_ENV_FAT_DEVICE_AND_PART,
 					&dev_desc, &info, 1);
+#endif
+
 	if (part < 0)
 		goto err_env_relocate;
 

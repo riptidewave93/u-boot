@@ -120,7 +120,8 @@ static int mmc_set_mod_clk(struct sunxi_mmc_priv *priv, unsigned int hz)
 	if (IS_ENABLED(CONFIG_MACH_SUN8I_A83T) && priv->mmc_no != 2)
 		new_mode = false;
 
-#if defined(CONFIG_MACH_SUN50I) || defined(CONFIG_MACH_SUN50I_H6)
+	/* H3/H5 boards have issues calibrating, so fallback to hard coded values */
+#if !defined(CONFIG_MACH_SUNXI_H3_H5) && (defined(CONFIG_MACH_SUN50I) || defined(CONFIG_MACH_SUN50I_H6))
 	calibrate = true;
 #endif
 

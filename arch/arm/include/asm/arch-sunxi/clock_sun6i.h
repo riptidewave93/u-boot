@@ -525,6 +525,7 @@ void clock_set_pll5(unsigned int clk, bool sigma_delta_enable);
 void clock_set_pll10(unsigned int hz);
 void clock_set_pll11(unsigned int clk, bool sigma_delta_enable);
 void clock_set_mipi_pll(unsigned int hz);
+unsigned int clock_get_pll1(void);
 unsigned int clock_get_pll3(void);
 unsigned int clock_get_pll6(void);
 unsigned int clock_get_mipi_pll(void);

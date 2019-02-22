@@ -286,6 +286,60 @@ int board_init(void)
 #endif
 #endif	/* CONFIG_DM_MMC */
 
+/* Add CONFIG_SUNXI_SY8106A_HACK */
+#if !defined(CONFIG_SPL_BUILD) && defined(CONFIG_SUNXI_SY8106A_HACK)
+#include <i2c.h>
+
+#define SY8106A_I2C_ADDR	0x65
+#define SY8106A_VOUT1_SEL	1
+#define SY8106A_VOUT1_SEL_ENABLE	(1 << 7)
+#define SY8106A_VOUT1_1200MV	((1200-680)/10 | SY8106A_VOUT1_SEL_ENABLE)
+	int busnum = CONFIG_SUNXI_SY8106A_HACK_DEV;
+	int i = 0;
+	struct udevice *i2c_dev;
+
+ 	/* Probe for bus */
+	ret = i2c_get_chip_for_busnum(busnum, SY8106A_I2C_ADDR, 1, &i2c_dev);
+	if (ret) {
+		printf("%s: no bus %d\n", __func__, busnum);
+		hang();
+	}
+
+ 	/* Start loop to set voltage */
+	for(i=0; i<3; i++) {
+		int ret = -1;
+		u8 read_volt;
+		u8 set_volt = SY8106A_VOUT1_1200MV;
+
+ 		/* See if we are already set to our wanted voltage, if not, set it */
+		ret = dm_i2c_read(i2c_dev, SY8106A_VOUT1_SEL, &read_volt, 1);
+		if (ret) {
+			printf("%s: failed to i2c_read SY8106A", __func__);
+			continue;
+		}
+		if (read_volt != set_volt) {
+			ret = dm_i2c_write(i2c_dev, SY8106A_VOUT1_SEL, &set_volt, 1);
+			if (ret) {
+				printf("%s: failed to i2c_write SY8106A", __func__);
+			}
+			/* Re-do our loop */
+			continue;
+		} else {
+			/* Voltage is set, so do our thing */
+			udelay(100);
+			clock_set_pll1(CONFIG_SYS_CLK_FREQ);
+			break;
+		}
+	}
+	/* Have we failed multiple times? */
+	if (i == 3) {
+		printf("%s: failed to init SY8106A\n", __func__);
+		hang();
+	}
+
+ printf("CPU Freq: %dMHz\n", clock_get_pll1()/1000000);
+#endif /* End CONFIG_SUNXI_SY8106A_HACK */
+
 	/* Uses dm gpio code so do this here and not in i2c_init_board() */
 	return soft_i2c_board_init();
 }
@@ -674,6 +728,8 @@ void sunxi_board_init(void)
 
 	sunxi_spl_store_dram_size(gd->ram_size);
 
+/* If we are using this hack, we move this out of SPL and into u-boot */
+#if !defined CONFIG_SUNXI_SY8106A_HACK
 	/*
 	 * Only clock up the CPU to full speed if we are reasonably
 	 * assured it's being powered with suitable core voltage
@@ -682,6 +738,7 @@ void sunxi_board_init(void)
 		clock_set_pll1(CONFIG_SYS_CLK_FREQ);
 	else
 		printf("Failed to set core voltage! Can't set CPU frequency\n");
+#endif /* END CONFIG_SUNXI_SY8106A_HACK */
 }
 #endif
 

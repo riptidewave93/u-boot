@@ -106,7 +106,7 @@ void clock_init_uart(void)
 #endif
 }
 
-#ifdef CONFIG_SPL_BUILD
+#if defined(CONFIG_SPL_BUILD) || defined(CONFIG_SUNXI_SY8106A_HACK)
 void clock_set_pll1(unsigned int clk)
 {
 	struct sunxi_ccm_reg * const ccm =
@@ -142,6 +142,21 @@ void clock_set_pll1(unsigned int clk)
 	       ATB_DIV_2 << ATB_DIV_SHIFT |
 	       CPU_CLK_SRC_PLL1 << CPU_CLK_SRC_SHIFT,
 	       &ccm->cpu_axi_cfg);
+}
+
+unsigned int clock_get_pll1(void)
+{
+	struct sunxi_ccm_reg * const ccm =
+		(struct sunxi_ccm_reg *)SUNXI_CCM_BASE;
+	unsigned int pll1_cfg;
+	int k, n;
+
+ 	pll1_cfg = readl(&ccm->pll1_cfg);
+
+ 	k = (pll1_cfg >>  4) & 0x3;
+	n = (pll1_cfg >>  8) & 0x1f;
+
+ 	return (24000000 * (n+1) * (k+1));
 }
 #endif
 

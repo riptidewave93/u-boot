@@ -298,6 +298,27 @@ config MACH_SUN50I_H5
 	select FIT
 	select SPL_LOAD_FIT
 
+if MACH_SUN50I_H5 # Hack for CONFIG_SUNXI_SY8106A_HACK
+
+config SUNXI_SY8106A_HACK
+	bool "H5 SY8106A Hack"
+	select R_I2C_ENABLE
+	default n
+	---help---
+	This enables a jank SY8106A driver within core u-boot, compared to
+	the SPL. Note that if this is enabled, SUNXI_SY8106A_HACK_DEV needs
+	to match the I2C bus in your DTB that has your SY8106A.
+
+config SUNXI_SY8106A_HACK_DEV
+	int "H5 SY8106A Hack DTS I2C #"
+	depends on SUNXI_SY8106A_HACK
+	default 5
+	---help---
+	Set the I2C # for the SUNXI_SYS8106A Hack. This number should match  what
+	is configured in your DTS.
+
+endif # End hack for CONFIG_SUNXI_SY8106A_HACK
+
 config MACH_SUN50I_H6
 	bool "sun50i (Allwinner H6)"
 	select ARM64

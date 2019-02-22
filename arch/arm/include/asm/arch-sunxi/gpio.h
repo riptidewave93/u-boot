@@ -151,6 +151,8 @@ enum sunxi_gpio_number {
 #define SUN6I_GPA_SDC2		5
 #define SUN6I_GPA_SDC3		4
 #define SUN8I_H3_GPA_UART0	2
+#define SUN8I_H3_GPA_TWI0	2
+#define SUN8I_H3_GPA_TWI1	3
 
 #define SUN4I_GPB_PWM		2
 #define SUN4I_GPB_TWI0		2

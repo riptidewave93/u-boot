@@ -532,6 +532,7 @@ dtb-$(CONFIG_MACH_SUN50I_H5) += \
 	sun50i-h5-bananapi-m2-plus.dtb \
 	sun50i-h5-emlid-neutis-n5-devboard.dtb \
 	sun50i-h5-libretech-all-h3-cc.dtb \
+	sun50i-h5-nanopi-neo2-v1-1.dtb \
 	sun50i-h5-nanopi-neo2.dtb \
 	sun50i-h5-nanopi-neo-core2.dtb \
 	sun50i-h5-nanopi-neo-plus2.dtb \

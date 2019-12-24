@@ -878,9 +878,26 @@ static void setup_environment(const void *fdt)
 			else
 				sprintf(ethaddr, "eth%daddr", i);
 
-			if (env_get(ethaddr))
-				continue;
+			/* While we want to trust this, we can't since
+			 * it could change if a SD is moved between boards.
+			 * Let's play it safe and just generate every boot.
+			 */
+			//if (env_get(ethaddr))
+			//	continue;
 
+#ifdef CONFIG_SUNXI_NANOPI_R1S_MAC
+			#include <eeprom.h>
+			// Are we an R1S-H5? If so, EEPROM is where we go for our MAC.
+			if(of_machine_is_compatible("friendlyarm,nanopi-r1s-h5")) {
+				memset(mac_addr, 0, sizeof(mac_addr));
+				eeprom_init(0);
+				ret = eeprom_read(0x51, 0xfa, mac_addr, sizeof(mac_addr));
+				if (is_valid_ethaddr(mac_addr)) {
+					eth_env_set_enetaddr(ethaddr, mac_addr);
+					continue;
+				}
+			}
+#endif
 			/* Non OUI / registered MAC address */
 			mac_addr[0] = (i << 4) | 0x02;
 			mac_addr[1] = (sid[0] >>  0) & 0xff;

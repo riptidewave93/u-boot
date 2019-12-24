@@ -298,8 +298,10 @@ config MACH_SUN50I_H5
 	select FIT
 	select SPL_LOAD_FIT
 
-if MACH_SUN50I_H5 # Hack for CONFIG_SUNXI_SY8106A_HACK
+# START SUNXI HACKS
+if MACH_SUN50I_H5
 
+# Hack for CONFIG_SUNXI_SY8106A_HACK
 config SUNXI_SY8106A_HACK
 	bool "H5 SY8106A Hack"
 	select R_I2C_ENABLE
@@ -317,7 +319,24 @@ config SUNXI_SY8106A_HACK_DEV
 	Set the I2C # for the SUNXI_SYS8106A Hack. This number should match  what
 	is configured in your DTS.
 
-endif # End hack for CONFIG_SUNXI_SY8106A_HACK
+# End hack for CONFIG_SUNXI_SY8106A_HACK
+
+# Hack for CONFIG_SUNXI_NANOPI_R1S_MAC
+config SUNXI_NANOPI_R1S_MAC
+	bool "NanoPi R1S H5 EEPROM MAC Hack"
+	select CMD_EEPROM
+	select DM_I2C_COMPAT
+	select I2C0_ENABLE
+	select I2C_EEPROM
+	default n
+	---help---
+	This enables the ability for the NanoPi R1S H5 to load it's
+	MAC address off of it's EEPROM. We have to gate this via KConfig to prevent failed builds for other boards that use this
+	source code.
+
+# End Hack for CONFIG_SUNXI_NANOPI_R1S_MAC
+
+endif # END SUNXI HACKS
 
 config MACH_SUN50I_H6
 	bool "sun50i (Allwinner H6)"

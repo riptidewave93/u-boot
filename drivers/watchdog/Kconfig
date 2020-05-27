@@ -178,6 +178,24 @@ config WDT_STM32MP
 	  Enable the STM32 watchdog (IWDG) driver. Enable support to
 	  configure STM32's on-SoC watchdog.
 
+config WDT_SUNXI
+	bool "SUNXI watchdog timer support"
+	depends on WDT
+	help
+	   Select this to enable the SUNXI watchdog timer.
+
+if WDT_SUNXI
+
+config WDT_SUNXI_TIMEOUT
+	int "SUNXI watchdog timeout setting"
+	default 10
+	range 1 16
+	depends on WDT_SUNXI
+	help
+	  Adjust the timeout window for the SUNXI watchdog timer.
+
+endif
+
 config XILINX_TB_WATCHDOG
 	bool "Xilinx Axi watchdog timer support"
 	depends on WDT
